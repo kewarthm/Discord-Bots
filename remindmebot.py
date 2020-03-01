@@ -1,5 +1,6 @@
 # bot.py
 import time
+import asyncio
 from threading import Thread, Lock
 import os
 import discord
@@ -21,11 +22,11 @@ class RemindMeThread(Thread):
                     print("Reminders on hold:")
                     for i in self.reminders.copy():
                         print(self.reminders[i][2])
-                        if self.reminders[i][0] <= ct:
+                        '''if self.reminders[i][0] <= ct:
                             msg = self.reminders[i][2]
                             ctx = self.reminders[i][1]
                             ctx.author.send(msg)
-                        self.reminders.pop(i)
+                            self.reminders.pop(i)'''
             finally:
                 self.lock.release()
 
@@ -80,7 +81,11 @@ async def remindme(ctx):
         return
     t = time.time()
     t = t + 60.00
+    await ctx.send("I will remind you in 60 seconds")
     reminders.addreminder(t, ctx, ctx.message.content)
+    await asyncio.sleep(60)
+    await ctx.author.send(ctx.message.content.strip('$remindme'))
+
 
 @bot.command(name="purge")
 async def purge(ctx):
